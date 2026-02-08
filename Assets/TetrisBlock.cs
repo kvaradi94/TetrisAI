@@ -60,14 +60,27 @@ public class TetrisBlock : MonoBehaviour
         }
     }
 
+    // void CheckForLines()
+    // {
+    //     for (int i = height - 1; i >= 0; i--)
+    //     {
+    //         if (HasLine(i))
+    //         {
+    //             DeleteLine(i);
+    //             RowDown(i + 1);
+    //         }
+    //     }
+    // }
+
     void CheckForLines()
     {
-        for (int i = height - 1; i >= 0; i--)
+        for (int y = height - 1; y >= 0; y--)
         {
-            if (HasLine(i))
+            if (HasLine(y))
             {
-                DeleteLine(i);
-                RowDown(i+1);
+                DeleteLine(y);
+                RowDown(y + 1);
+                y++; // recheck same row after shifting
             }
         }
     }
@@ -93,17 +106,33 @@ public class TetrisBlock : MonoBehaviour
         }
     }
 
-    void RowDown(int i)
+    // void RowDown(int i)
+    // {
+    //     for (int y = i; y < height; y++)
+    //     {
+    //         for (int j = 0; j < width; j++)
+    //         {
+    //             if (grid[j, y] != null)
+    //             {
+    //                 grid[j, y - 1] = grid[j, y];
+    //                 grid[j, y] = null;
+    //                 grid[j, y - 1].transform.position -= new Vector3(0, 1, 0);
+    //             }
+    //         }
+    //     }
+    // }
+
+    void RowDown(int startY)
     {
-        for (int y = i; y < height; y++)
+        for (int y = startY; y < height; y++)
         {
-            for (int j = 0; j < width; j++)
+            for (int x = 0; x < width; x++)
             {
-                if (grid[j, y] != null)
+                if (grid[y, x] != null)
                 {
-                    grid[j, y - 1] = grid[j, y];
-                    grid[j, y] = null;
-                    grid[j, y - 1].transform.position -= new Vector3(0, 1, 0);
+                    grid[y - 1, x] = grid[y, x];
+                    grid[y, x] = null;
+                    grid[y - 1, x].transform.position += Vector3.down;
                 }
             }
         }

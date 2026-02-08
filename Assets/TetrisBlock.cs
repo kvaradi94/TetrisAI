@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,7 +6,7 @@ public class TetrisBlock : MonoBehaviour
 
     public Vector3 rotationPoint;
     private float prevTime;
-    public float fallTime = 2f;
+    public float fallTime = 0.02f;
     public static int height = 28;
     public static int width = 16;
     private static Transform[,] grid = new Transform[height, width];
@@ -15,12 +14,34 @@ public class TetrisBlock : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        prevTime = Time.time;
+        Application.targetFrameRate = 60;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Time.time - prevTime > (Keyboard.current.downArrowKey.isPressed ? fallTime / 20 : fallTime / 2))
+        {
+            transform.position += new Vector3(0, -1, 0);
+            if (!ValidMove())
+            {
+                transform.position -= new Vector3(0, -1, 0);
+                AddToGrid();
+                CheckForLines();
+                this.enabled = false;
+                FindObjectOfType<SpawnTetromino>().NewTetromino();
+
+                if (GetCurrentGridHeight() > height - 6)
+                {
+                    GameOverHandler.GetInstance()?.DisplayGameOver();
+                    Time.timeScale = 0f;
+                    return;
+                }
+            }
+            prevTime = Time.time;
+        }
+
         if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
         {
             transform.position += new Vector3(-1, 0, 0);
@@ -36,26 +57,6 @@ public class TetrisBlock : MonoBehaviour
             {
                 transform.position -= new Vector3(1, 0, 0);
             }
-        }
-        else if (Time.time - prevTime > (Keyboard.current.downArrowKey.isPressed ? fallTime / 10 : fallTime))
-        {
-            transform.position += new Vector3(0, -1, 0);
-            if (!ValidMove())
-            {
-                transform.position -= new Vector3(0, -1, 0);
-                AddToGrid();
-                CheckForLines();
-                this.enabled = false;
-                FindObjectOfType<SpawnTetromino>().NewTetromino();
-
-                if (GetCurrentGridHeight() > height-6)
-                {
-                    GameOverHandler.GetInstance()?.DisplayGameOver();
-                    Time.timeScale = 0f;
-                    return;
-                }
-            }
-            prevTime = Time.time;
         }
         else if (Keyboard.current.upArrowKey.wasPressedThisFrame)
         {

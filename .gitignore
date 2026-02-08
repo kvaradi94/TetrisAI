@@ -8,6 +8,8 @@ Builds/
 Logs/
 UserSettings/
 
+*.app
+
 # Visual Studio cache directory
 .vs/
 

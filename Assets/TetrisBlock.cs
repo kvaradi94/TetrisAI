@@ -47,6 +47,13 @@ public class TetrisBlock : MonoBehaviour
                 CheckForLines();
                 this.enabled = false;
                 FindObjectOfType<SpawnTetromino>().NewTetromino();
+
+                if (GetCurrentGridHeight() > height-6)
+                {
+                    GameOverHandler.GetInstance()?.DisplayGameOver();
+                    Time.timeScale = 0f;
+                    return;
+                }
             }
             prevTime = Time.time;
         }
@@ -68,6 +75,7 @@ public class TetrisBlock : MonoBehaviour
             {
                 DeleteLine(y);
                 RowDown(y + 1);
+                ScoreManager.Instance.AddPoints(100);
                 y++; // recheck same row after shifting
             }
         }
@@ -136,9 +144,6 @@ public class TetrisBlock : MonoBehaviour
             x -= 8;
             y -= 1;
 
-            Debug.Log(x);
-            Debug.Log(y);
-
             if (x < 0 || x >= width || y < 0 || y >= height)
             {
                 return false;
@@ -151,5 +156,20 @@ public class TetrisBlock : MonoBehaviour
         }
 
         return true;
+    }
+
+    int GetCurrentGridHeight()
+    {
+        for (int y = height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (grid[y, x] != null)
+                {
+                    return y + 1; // +1 makes it human-readable (height, not index)
+                }
+            }
+        }
+        return 0;
     }
 }

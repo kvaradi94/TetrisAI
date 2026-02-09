@@ -34,4 +34,10 @@ public class GameOverHandler : MonoBehaviour
             gameOverText.text = "Game Over";
         }
     }
+
+    public void ResetGameOver()
+    {
+        if (gameOverText != null)
+            gameOverText.text = "";
+    }
 }

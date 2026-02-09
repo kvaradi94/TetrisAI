@@ -10,8 +10,24 @@ public class SpawnTetromino : MonoBehaviour
         NewTetromino();
     }
 
+    // public void NewTetromino()
+    // {
+    //     Instantiate(Tetrominos[Random.Range(0, Tetrominos.Length)], transform.position, Quaternion.identity); 
+    // }
+
     public void NewTetromino()
     {
-        Instantiate(Tetrominos[Random.Range(0, Tetrominos.Length)], transform.position, Quaternion.identity); 
+        Instantiate(
+            Tetrominos[Random.Range(0, Tetrominos.Length)],
+            transform.position,
+            Quaternion.identity
+        );
+
+        // 🔔 Tell the agent to act NOW
+        var agent = FindObjectOfType<PlayTetrisAgent>();
+        if (agent != null)
+        {
+            agent.RequestDecision();
+        }
     }
 }

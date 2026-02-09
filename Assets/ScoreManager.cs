@@ -6,6 +6,7 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance;
     public TextMeshProUGUI scoreText;
     private int score = 0;
+    public int CurrentScore => score;
 
     void Awake()
     {
@@ -30,5 +31,11 @@ public class ScoreManager : MonoBehaviour
     void UpdateUI()
     {
         scoreText.text = score.ToString();
+    }
+
+    public void ResetScore()
+    {
+        score = 0;
+        UpdateUI();
     }
 }

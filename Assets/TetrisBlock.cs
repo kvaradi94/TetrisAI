@@ -10,18 +10,21 @@ public class TetrisBlock : MonoBehaviour
     public static int height = 28;
     public static int width = 16;
     private static Transform[,] grid = new Transform[height, width];
+    public bool IsPlaced { get; private set; }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        IsPlaced = false;
         prevTime = Time.time;
-        Application.targetFrameRate = 60;
+        // Application.targetFrameRate = 60;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Time.time - prevTime > (Keyboard.current.downArrowKey.isPressed ? fallTime / 20 : fallTime / 2))
+        // if (Time.time - prevTime > (Keyboard.current.downArrowKey.isPressed ? fallTime / 20 : fallTime / 2))
+        if (Time.time - prevTime > (Keyboard.current.downArrowKey.isPressed ? fallTime / 5000 : fallTime / 5000))
         {
             transform.position += new Vector3(0, -1, 0);
             if (!ValidMove())
@@ -34,8 +37,15 @@ public class TetrisBlock : MonoBehaviour
 
                 if (GetCurrentGridHeight() > height - 6)
                 {
+                    // GameOverHandler.GetInstance()?.DisplayGameOver();
+                    // Time.timeScale = 0f;
                     GameOverHandler.GetInstance()?.DisplayGameOver();
-                    Time.timeScale = 0f;
+
+                    var agent = FindObjectOfType<PlayTetrisAgent>();
+                    if (agent != null)
+                    {
+                        agent.GameOver();
+                    }
                     return;
                 }
             }
@@ -122,6 +132,7 @@ public class TetrisBlock : MonoBehaviour
 
     void AddToGrid()
     {
+        IsPlaced = true;
         foreach (Transform children in transform)
         {
             int x = Mathf.RoundToInt(children.transform.position.x);
@@ -172,5 +183,65 @@ public class TetrisBlock : MonoBehaviour
             }
         }
         return 0;
+    }
+
+    // For the agent
+    public bool RotateOnce()
+    {
+        transform.RotateAround(transform.TransformPoint(rotationPoint),
+            new Vector3(0, 0, 1), 90);
+
+        if (!ValidMove())
+        {
+            transform.RotateAround(transform.TransformPoint(rotationPoint),
+                new Vector3(0, 0, 1), -90);
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool MoveHorizontal(int dir)
+    {
+        transform.position += new Vector3(dir, 0, 0);
+
+        if (!ValidMove())
+        {
+            transform.position -= new Vector3(dir, 0, 0);
+            return false;
+        }
+
+        return true;
+    }
+
+    public void MoveToColumn(int targetColumn)
+    {
+        // Convert grid column (0–15) to world X
+        int worldTargetX = targetColumn + 8;
+
+        int safety = 50; // avoid infinite loops
+
+        while (Mathf.RoundToInt(transform.position.x) != worldTargetX && safety-- > 0)
+        {
+            int dir = transform.position.x < worldTargetX ? 1 : -1;
+
+            if (!MoveHorizontal(dir))
+                break;
+        }
+    }
+
+    public static void ClearGrid()
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (grid[y, x] != null)
+                {
+                    Destroy(grid[y, x].gameObject);
+                    grid[y, x] = null;
+                }
+            }
+        }
     }
 }

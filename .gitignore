@@ -7,6 +7,8 @@ Build/
 Builds/
 Logs/
 UserSettings/
+venv
+results
 
 *.app
 

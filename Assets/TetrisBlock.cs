@@ -1,3 +1,4 @@
+using Unity.MLAgents;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,10 +8,11 @@ public class TetrisBlock : MonoBehaviour
     public Vector3 rotationPoint;
     private float prevTime;
     public float fallTime = 0.02f;
-    public static int height = 28;
-    public static int width = 16;
-    private static Transform[,] grid = new Transform[height, width];
+    public static int height = 24;
+    public static int width = 10;
+    public static Transform[,] grid = new Transform[height, width];
     public bool IsPlaced { get; private set; }
+    public TetrominoType Type;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,72 +26,73 @@ public class TetrisBlock : MonoBehaviour
     void Update()
     {
         // if (Time.time - prevTime > (Keyboard.current.downArrowKey.isPressed ? fallTime / 20 : fallTime / 2))
-        if (Time.time - prevTime > (Keyboard.current.downArrowKey.isPressed ? fallTime / 5000 : fallTime / 5000))
-        {
-            transform.position += new Vector3(0, -1, 0);
-            if (!ValidMove())
-            {
-                transform.position -= new Vector3(0, -1, 0);
-                AddToGrid();
-                CheckForLines();
-                this.enabled = false;
-                FindObjectOfType<SpawnTetromino>().NewTetromino();
+        // {
+        //     transform.position += new Vector3(0, -1, 0);
+        //     if (!ValidMove())
+        //     {
+        //         transform.position -= new Vector3(0, -1, 0);
+        //         AddToGrid();
+        //         // CheckForLines();
+        //         int linesCleared = CheckForLines();
+        //         this.enabled = false;
+        //         FindObjectOfType<SpawnTetromino>().NewTetromino();
 
-                if (GetCurrentGridHeight() > height - 6)
-                {
-                    // GameOverHandler.GetInstance()?.DisplayGameOver();
-                    // Time.timeScale = 0f;
-                    GameOverHandler.GetInstance()?.DisplayGameOver();
+        //         if (GetCurrentGridHeight() > height - 6)
+        //         {
+        //             // GameOverHandler.GetInstance()?.DisplayGameOver();
+        //             // Time.timeScale = 0f;
+        //             GameOverHandler.GetInstance()?.DisplayGameOver();
+        //             return;
+        //         }
+        //     }
+        //     prevTime = Time.time;
+        // }
 
-                    var agent = FindObjectOfType<PlayTetrisAgent>();
-                    if (agent != null)
-                    {
-                        agent.GameOver();
-                    }
-                    return;
-                }
-            }
-            prevTime = Time.time;
-        }
-
-        if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
-        {
-            transform.position += new Vector3(-1, 0, 0);
-            if (!ValidMove())
-            {
-                transform.position -= new Vector3(-1, 0, 0);
-            }
-        }
-        else if (Keyboard.current.rightArrowKey.wasPressedThisFrame)
-        {
-            transform.position += new Vector3(1, 0, 0);
-            if (!ValidMove())
-            {
-                transform.position -= new Vector3(1, 0, 0);
-            }
-        }
-        else if (Keyboard.current.upArrowKey.wasPressedThisFrame)
-        {
-            transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), 90);
-            if (!ValidMove())
-            {
-                transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), -90);
-            }
-        }
+        // if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
+        // {
+        //     transform.position += new Vector3(-1, 0, 0);
+        //     if (!ValidMove())
+        //     {
+        //         transform.position -= new Vector3(-1, 0, 0);
+        //     }
+        // }
+        // else if (Keyboard.current.rightArrowKey.wasPressedThisFrame)
+        // {
+        //     transform.position += new Vector3(1, 0, 0);
+        //     if (!ValidMove())
+        //     {
+        //         transform.position -= new Vector3(1, 0, 0);
+        //     }
+        // }
+        // else if (Keyboard.current.upArrowKey.wasPressedThisFrame)
+        // {
+        //     transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), 90);
+        //     if (!ValidMove())
+        //     {
+        //         transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), -90);
+        //     }
+        // }
+        // Debug.Log("maxheight: " + GetMaxHeight());
+        // Debug.Log("hole: " + CountHoles());
     }
 
-    void CheckForLines()
+    public int CheckForLines()
     {
+        int linesCleared = 0;
+
         for (int y = height - 1; y >= 0; y--)
         {
             if (HasLine(y))
             {
                 DeleteLine(y);
                 RowDown(y + 1);
-                ScoreManager.Instance.AddPoints(100);
-                y++; // recheck same row after shifting
+                ScoreManager.Instance.AddPoints();
+                linesCleared++;
+                y++;
             }
         }
+
+        return linesCleared;
     }
 
     bool HasLine(int i)
@@ -130,7 +133,7 @@ public class TetrisBlock : MonoBehaviour
     }
 
 
-    void AddToGrid()
+    public void AddToGrid()
     {
         IsPlaced = true;
         foreach (Transform children in transform)
@@ -138,7 +141,7 @@ public class TetrisBlock : MonoBehaviour
             int x = Mathf.RoundToInt(children.transform.position.x);
             int y = Mathf.RoundToInt(children.transform.position.y);
 
-            x -= 8;
+            x -= 11;
             y -= 1;
 
             grid[y, x] = children;
@@ -153,7 +156,7 @@ public class TetrisBlock : MonoBehaviour
             int y = Mathf.RoundToInt(children.transform.position.y);
 
             //Offset the x and y to the GameArea position
-            x -= 8;
+            x -= 11;
             y -= 1;
 
             if (x < 0 || x >= width || y < 0 || y >= height)
@@ -241,6 +244,78 @@ public class TetrisBlock : MonoBehaviour
                     Destroy(grid[y, x].gameObject);
                     grid[y, x] = null;
                 }
+            }
+        }
+    }
+
+    public static int CountHoles()
+    {
+        int holes = 0;
+
+        for (int x = 0; x < width; x++)
+        {
+            bool foundBlock = false;
+
+            for (int y = height - 1; y >= 0; y--)
+            {
+                if (grid[y, x] != null)
+                {
+                    foundBlock = true;
+                }
+                else if (foundBlock)
+                {
+                    holes++;
+                }
+            }
+        }
+
+        return holes;
+    }
+
+    public static int GetMaxHeight()
+    {
+        for (int y = height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (grid[y, x] != null)
+                    return y + 1;
+            }
+        }
+        return 0;
+    }
+
+    public static int[] GetColumnHeights()
+    {
+        int[] heights = new int[width];
+
+        for (int x = 0; x < width; x++)
+        {
+            heights[x] = 0;
+
+            for (int y = height - 1; y >= 0; y--)
+            {
+                if (grid[y, x] != null)
+                {
+                    heights[x] = y + 1;
+                    break;
+                }
+            }
+        }
+
+        return heights;
+    }
+
+    public void HardDrop()
+    {
+        while (true)
+        {
+            transform.position += Vector3.down;
+
+            if (!ValidMove())
+            {
+                transform.position -= Vector3.down;
+                break;
             }
         }
     }

@@ -1,0 +1,65 @@
+{
+    "GoalToTetris": {
+        "checkpoints": [
+            {
+                "steps": 3340,
+                "file_path": "results/run002/GoalToTetris/GoalToTetris-3340.onnx",
+                "reward": -1000.0,
+                "creation_time": 1771197591.461171,
+                "auxillary_file_paths": [
+                    "results/run002/GoalToTetris/GoalToTetris-3340.pt"
+                ]
+            },
+            {
+                "steps": 26999978,
+                "file_path": "results/run002/GoalToTetris/GoalToTetris-26999978.onnx",
+                "reward": null,
+                "creation_time": 1771447194.118767,
+                "auxillary_file_paths": [
+                    "results/run002/GoalToTetris/GoalToTetris-26999978.pt"
+                ]
+            },
+            {
+                "steps": 27010790,
+                "file_path": "results/run002/GoalToTetris/GoalToTetris-27010790.onnx",
+                "reward": 2714.285714285714,
+                "creation_time": 1771447240.474607,
+                "auxillary_file_paths": [
+                    "results/run002/GoalToTetris/GoalToTetris-27010790.pt"
+                ]
+            },
+            {
+                "steps": 27021037,
+                "file_path": "results/run002/GoalToTetris/GoalToTetris-27021037.onnx",
+                "reward": null,
+                "creation_time": 1771533877.677398,
+                "auxillary_file_paths": [
+                    "results/run002/GoalToTetris/GoalToTetris-27021037.pt"
+                ]
+            },
+            {
+                "steps": 27031325,
+                "file_path": "results/run002/GoalToTetris/GoalToTetris-27031325.onnx",
+                "reward": -1026.062001953125,
+                "creation_time": 1771537054.108591,
+                "auxillary_file_paths": [
+                    "results/run002/GoalToTetris/GoalToTetris-27031325.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 27031325,
+            "file_path": "results/run002/GoalToTetris.onnx",
+            "reward": -1026.062001953125,
+            "creation_time": 1771537054.108591,
+            "auxillary_file_paths": [
+                "results/run002/GoalToTetris/GoalToTetris-27031325.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.11.0"
+    }
+}

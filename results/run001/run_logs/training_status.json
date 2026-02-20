@@ -1,0 +1,65 @@
+{
+    "GoalToTetris": {
+        "checkpoints": [
+            {
+                "steps": 5103424,
+                "file_path": "results/run001/GoalToTetris/GoalToTetris-5103424.onnx",
+                "reward": 1014.9253731343283,
+                "creation_time": 1771534579.709731,
+                "auxillary_file_paths": [
+                    "results/run001/GoalToTetris/GoalToTetris-5103424.pt"
+                ]
+            },
+            {
+                "steps": 5130642,
+                "file_path": "results/run001/GoalToTetris/GoalToTetris-5130642.onnx",
+                "reward": -18952.268041237112,
+                "creation_time": 1771535187.96387,
+                "auxillary_file_paths": [
+                    "results/run001/GoalToTetris/GoalToTetris-5130642.pt"
+                ]
+            },
+            {
+                "steps": 5137197,
+                "file_path": "results/run001/GoalToTetris/GoalToTetris-5137197.onnx",
+                "reward": -8312.842105263158,
+                "creation_time": 1771535292.281014,
+                "auxillary_file_paths": [
+                    "results/run001/GoalToTetris/GoalToTetris-5137197.pt"
+                ]
+            },
+            {
+                "steps": 5499969,
+                "file_path": "results/run001/GoalToTetris/GoalToTetris-5499969.onnx",
+                "reward": 692.5491000782359,
+                "creation_time": 1771536394.34897,
+                "auxillary_file_paths": [
+                    "results/run001/GoalToTetris/GoalToTetris-5499969.pt"
+                ]
+            },
+            {
+                "steps": 5680021,
+                "file_path": "results/run001/GoalToTetris/GoalToTetris-5680021.onnx",
+                "reward": 789.0702385341419,
+                "creation_time": 1771536951.1272068,
+                "auxillary_file_paths": [
+                    "results/run001/GoalToTetris/GoalToTetris-5680021.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 5680021,
+            "file_path": "results/run001/GoalToTetris.onnx",
+            "reward": 789.0702385341419,
+            "creation_time": 1771536951.1272068,
+            "auxillary_file_paths": [
+                "results/run001/GoalToTetris/GoalToTetris-5680021.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.11.0"
+    }
+}

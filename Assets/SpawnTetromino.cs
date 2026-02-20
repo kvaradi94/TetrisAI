@@ -10,23 +10,27 @@ public class SpawnTetromino : MonoBehaviour
         NewTetromino();
     }
 
+    // This is for human player
     // public void NewTetromino()
     // {
     //     Instantiate(Tetrominos[Random.Range(0, Tetrominos.Length)], transform.position, Quaternion.identity); 
     // }
 
+    // This is for AI agent
     public void NewTetromino()
     {
-        Instantiate(
+        GameObject obj = Instantiate(
             Tetrominos[Random.Range(0, Tetrominos.Length)],
             transform.position,
             Quaternion.identity
         );
 
-        // 🔔 Tell the agent to act NOW
+        TetrisBlock block = obj.GetComponent<TetrisBlock>();
+
         var agent = FindObjectOfType<PlayTetrisAgent>();
-        if (agent != null)
+        if (agent != null && block != null)
         {
+            agent.SetCurrentPiece(block.Type);
             agent.RequestDecision();
         }
     }

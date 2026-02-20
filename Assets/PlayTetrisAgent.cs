@@ -5,7 +5,14 @@ using Unity.MLAgents.Sensors;
 
 public class PlayTetrisAgent : Agent
 {
-    private int lastScore;
+    private int previousHeight;
+    private int previousHoles;
+    private TetrominoType currentPieceType;
+
+    public void SetCurrentPiece(TetrominoType type)
+    {
+        currentPieceType = type;
+    }
 
     public override void OnEpisodeBegin()
     {
@@ -21,57 +28,101 @@ public class PlayTetrisAgent : Agent
 
         FindObjectOfType<SpawnTetromino>()?.NewTetromino();
 
-        lastScore = 0;
+        previousHeight = 0;
+        previousHoles = 0;
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(
-            ScoreManager.Instance != null
-                ? ScoreManager.Instance.CurrentScore / 1000f
-                : 0f
-        );
+        for (int y = 0; y < TetrisBlock.height; y++)
+        {
+            for (int x = 0; x < TetrisBlock.width; x++)
+            {
+                sensor.AddObservation(TetrisBlock.grid[y, x] != null ? 1f : 0f);
+            }
+        }
+
+        float[] oneHot = new float[7];
+        oneHot[(int)currentPieceType] = 1f;
+
+        foreach (float v in oneHot)
+            sensor.AddObservation(v);
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
         var block = FindObjectOfType<TetrisBlock>();
-        if (block == null)
-            return;
-
-        // Prevent multiple decisions for the same tetromino
-        if (block.IsPlaced)
+        if (block == null || block.IsPlaced)
             return;
 
         int targetColumn = actions.DiscreteActions[0]; // 0–15
         int rotation = actions.DiscreteActions[1];     // 0–3
 
-        // 1️⃣ Rotate
+        // Apply rotation
         for (int i = 0; i < rotation; i++)
             block.RotateOnce();
 
-        // 2️⃣ Move horizontally
+        // Move horizontally
         block.MoveToColumn(targetColumn);
 
-        GiveScoreReward();
+        // INSTANT DROP
+        block.HardDrop();
+
+        // Lock piece
+        block.AddToGrid();
+
+        int linesCleared = block.CheckForLines();
+
+        var agent = this;
+
+        bool gameOver = TetrisBlock.GetMaxHeight() > TetrisBlock.height - 6;
+
+        if (gameOver)
+        {
+            GameOverHandler.GetInstance()?.DisplayGameOver();
+            agent.GameOver();
+            return;
+        }
+        else
+        {
+            agent.EvaluatePlacement(linesCleared);
+        }
+
+        FindObjectOfType<SpawnTetromino>()?.NewTetromino();
     }
 
-    void GiveScoreReward()
+    public void EvaluatePlacement(int linesCleared)
     {
-        if (ScoreManager.Instance == null) return;
+        if (linesCleared > 0)
+        {
+            AddReward(1000f);
+            return;
+        }
 
-        int score = ScoreManager.Instance.CurrentScore;
-        int delta = score - lastScore;
+        int currentHeight = TetrisBlock.GetMaxHeight();
+        int currentHoles = TetrisBlock.CountHoles();
 
-        if (delta > 0)
-            AddReward(delta * 0.01f);
+        if (currentHeight > previousHeight)
+        {
+            float reward = -0.1f * currentHeight;
+            AddReward(reward); 
+            previousHeight = currentHeight;
+        }
 
-        lastScore = score;
+        if (currentHoles > previousHoles)
+        {
+            float reward = -0.3f * currentHeight;
+            AddReward(reward); 
+            previousHoles = currentHoles;
+        }
+
     }
-
     public void GameOver()
     {
-        AddReward(-1f);
+        AddReward(-1000f);
+
+        Debug.Log($"Episodes: {CompletedEpisodes}, Total Reward: {GetCumulativeReward():F3}, Point scored: {ScoreManager.Instance.CurrentScore}");
+
         EndEpisode();
     }
 }

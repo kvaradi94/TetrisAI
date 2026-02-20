@@ -8,7 +8,7 @@ Builds/
 Logs/
 UserSettings/
 venv
-results
+# results
 
 *.app
 

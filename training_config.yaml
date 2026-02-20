@@ -1,0 +1,14 @@
+behaviors:
+  GoalToTetris:
+    trainer_type: ppo
+    max_steps: 50000000
+    time_horizon: 256
+    summary_freq: 10000
+    network_settings:
+      hidden_units: 256 
+      num_layers: 3 
+    reward_signals:
+      extrinsic:
+        gamma: 0.95
+        strength: 1.0
+

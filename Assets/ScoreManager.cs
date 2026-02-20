@@ -7,6 +7,8 @@ public class ScoreManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     private int score = 0;
     public int CurrentScore => score;
+    public int pointForClearingLine = 1000;
+
 
     void Awake()
     {
@@ -22,9 +24,9 @@ public class ScoreManager : MonoBehaviour
         UpdateUI();
     }
 
-    public void AddPoints(int amount)
+    public void AddPoints()
     {
-        score += amount;
+        score += pointForClearingLine;
         UpdateUI();
     }
 

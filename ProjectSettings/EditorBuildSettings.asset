@@ -13,4 +13,5 @@ EditorBuildSettings:
     guid: bcf8f1146e8ef4f76adb7989ef9a8285
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+    com.unity.ml-agents.settings: {fileID: 11400000, guid: 88facf1415aba4b598e2f1b4b84e35f1, type: 2}
   m_UseUCBPForAssetBundles: 0

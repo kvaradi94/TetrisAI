@@ -398,3 +398,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationPoint: {x: 0.5, y: 0.5, z: 0}
   fallTime: 0.8
+  Type: 6

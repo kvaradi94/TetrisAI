@@ -31,7 +31,6 @@ public class SpawnTetromino : MonoBehaviour
         if (agent != null && block != null)
         {
             agent.SetCurrentPiece(block.Type);
-            agent.RequestDecision();
         }
     }
 }

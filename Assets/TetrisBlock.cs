@@ -17,6 +17,7 @@ public class TetrisBlock : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Time.timeScale = 4f;
         IsPlaced = false;
         prevTime = Time.time;
         // Application.targetFrameRate = 60;
@@ -25,56 +26,64 @@ public class TetrisBlock : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // if (Time.time - prevTime > (Keyboard.current.downArrowKey.isPressed ? fallTime / 20 : fallTime / 2))
-        // {
-        //     transform.position += new Vector3(0, -1, 0);
-        //     if (!ValidMove())
-        //     {
-        //         transform.position -= new Vector3(0, -1, 0);
-        //         AddToGrid();
-        //         // CheckForLines();
-        //         int linesCleared = CheckForLines();
-        //         this.enabled = false;
-        //         FindObjectOfType<SpawnTetromino>().NewTetromino();
+        if (Time.time - prevTime > (Keyboard.current.downArrowKey.isPressed ? fallTime / 20 : fallTime / 20))
+        {
+            transform.position += new Vector3(0, -1, 0);
+            if (!ValidMove())
+            {
+                transform.position -= new Vector3(0, -1, 0);
+                AddToGrid();
+                // CheckForLines();
+                int lines = CheckForLines();
+                this.enabled = false;
+                // FindObjectOfType<PlayTetrisAgent>()?.OnPiecePlaced(lines);
+                FindObjectOfType<SpawnTetromino>().NewTetromino();
 
-        //         if (GetCurrentGridHeight() > height - 6)
-        //         {
-        //             // GameOverHandler.GetInstance()?.DisplayGameOver();
-        //             // Time.timeScale = 0f;
-        //             GameOverHandler.GetInstance()?.DisplayGameOver();
-        //             return;
-        //         }
-        //     }
-        //     prevTime = Time.time;
-        // }
+                if (GetCurrentGridHeight() > height - 6)
+                {
+                    // GameOverHandler.GetInstance()?.DisplayGameOver();
+                    // Time.timeScale = 0f;
+                    GameOverHandler.GetInstance()?.DisplayGameOver();
+                    return;
+                }
+            }
+            prevTime = Time.time;
+        }
 
-        // if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
-        // {
-        //     transform.position += new Vector3(-1, 0, 0);
-        //     if (!ValidMove())
-        //     {
-        //         transform.position -= new Vector3(-1, 0, 0);
-        //     }
-        // }
-        // else if (Keyboard.current.rightArrowKey.wasPressedThisFrame)
-        // {
-        //     transform.position += new Vector3(1, 0, 0);
-        //     if (!ValidMove())
-        //     {
-        //         transform.position -= new Vector3(1, 0, 0);
-        //     }
-        // }
-        // else if (Keyboard.current.upArrowKey.wasPressedThisFrame)
-        // {
-        //     transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), 90);
-        //     if (!ValidMove())
-        //     {
-        //         transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), -90);
-        //     }
-        // }
+        if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
+        {
+            transform.position += new Vector3(-1, 0, 0);
+            if (!ValidMove())
+            {
+                transform.position -= new Vector3(-1, 0, 0);
+            }
+        }
+        else if (Keyboard.current.rightArrowKey.wasPressedThisFrame)
+        {
+            transform.position += new Vector3(1, 0, 0);
+            if (!ValidMove())
+            {
+                transform.position -= new Vector3(1, 0, 0);
+            }
+        }
+        else if (Keyboard.current.upArrowKey.wasPressedThisFrame)
+        {
+            transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), 90);
+            if (!ValidMove())
+            {
+                transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), -90);
+            }
+        }
         // Debug.Log("maxheight: " + GetMaxHeight());
         // Debug.Log("hole: " + CountHoles());
     }
+
+    // for one decision per piece:
+    // branch 0: 16
+    // branch 1: 4
+    // Update is required for AI agent
+    // branch 0 5
+    // branch 1 remove
 
     public int CheckForLines()
     {
@@ -133,9 +142,25 @@ public class TetrisBlock : MonoBehaviour
     }
 
 
+    // public void AddToGrid()
+    // {
+    //     IsPlaced = true;
+    //     foreach (Transform children in transform)
+    //     {
+    //         int x = Mathf.RoundToInt(children.transform.position.x);
+    //         int y = Mathf.RoundToInt(children.transform.position.y);
+
+    //         x -= 11;
+    //         y -= 1;
+
+    //         grid[y, x] = children;
+    //     }
+    // }
+
     public void AddToGrid()
     {
         IsPlaced = true;
+
         foreach (Transform children in transform)
         {
             int x = Mathf.RoundToInt(children.transform.position.x);
@@ -147,6 +172,25 @@ public class TetrisBlock : MonoBehaviour
             grid[y, x] = children;
         }
     }
+
+    // public void AddToGrid()
+    // {
+    //     IsPlaced = true;
+
+    //     foreach (Transform children in transform)
+    //     {
+    //         int x = Mathf.RoundToInt(children.transform.position.x);
+    //         int y = Mathf.RoundToInt(children.transform.position.y);
+
+    //         if (x < 0 || x >= width || y < 0 || y >= height)
+    //         {
+    //             Debug.LogError($"Invalid grid index! x:{x} y:{y}");
+    //             continue; // prevent crash
+    //         }
+
+    //         grid[y, x] = children;
+    //     }
+    // }
 
     bool ValidMove()
     {

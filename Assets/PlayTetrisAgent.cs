@@ -49,47 +49,120 @@ public class PlayTetrisAgent : Agent
             sensor.AddObservation(v);
     }
 
+    // this is for the AI agent that actually plays the tetris
+    public void OnPiecePlaced(int linesCleared)
+    {
+        if (linesCleared > 0)
+            AddReward(5f * linesCleared);
+
+        int height = TetrisBlock.GetMaxHeight();
+        int holes = TetrisBlock.CountHoles();
+
+        AddReward(-0.01f * height);
+        AddReward(-0.02f * holes);
+
+        if (height > TetrisBlock.height - 6)
+        {
+            AddReward(-10f);
+            EndEpisode();
+        }
+    }
+
+    // this is for the AI agent that actually plays the tetris
+    private void FixedUpdate()
+    {
+        RequestDecision();
+    }
+
     public override void OnActionReceived(ActionBuffers actions)
     {
         var block = FindObjectOfType<TetrisBlock>();
         if (block == null || block.IsPlaced)
             return;
 
-        int targetColumn = actions.DiscreteActions[0]; // 0–15
-        int rotation = actions.DiscreteActions[1];     // 0–3
+        int action = actions.DiscreteActions[0];
 
-        // Apply rotation
-        for (int i = 0; i < rotation; i++)
-            block.RotateOnce();
+        switch (action)
+        {
+            case 1:
+                block.MoveHorizontal(-1);
+                AddReward(-0.01f);
+                break;
 
-        // Move horizontally
-        block.MoveToColumn(targetColumn);
+            case 2:
+                block.MoveHorizontal(1);
+                AddReward(-0.01f);
+                break;
 
-        // INSTANT DROP
-        block.HardDrop();
+            case 3:
+                block.RotateOnce();
+                AddReward(-0.01f);
+                break;
 
-        // Lock piece
-        block.AddToGrid();
-
-        int linesCleared = block.CheckForLines();
-
-        var agent = this;
+            case 0:
+            default:
+                break;
+        }
 
         bool gameOver = TetrisBlock.GetMaxHeight() > TetrisBlock.height - 6;
 
         if (gameOver)
         {
             GameOverHandler.GetInstance()?.DisplayGameOver();
-            agent.GameOver();
+            this.GameOver();
             return;
         }
         else
         {
-            agent.EvaluatePlacement(linesCleared);
+            int linesCleared = block.CheckForLines();
+            this.EvaluatePlacement(linesCleared);
         }
 
-        FindObjectOfType<SpawnTetromino>()?.NewTetromino();
+        // AddReward(-0.001f); // small time penalty to encourage faster play
     }
+
+    // This is for one decision per piece 
+    // public override void OnActionReceived(ActionBuffers actions)
+    // {
+    //     var block = FindObjectOfType<TetrisBlock>();
+    //     if (block == null || block.IsPlaced)
+    //         return;
+
+    //     int targetColumn = actions.DiscreteActions[0]; // 0–15
+    //     int rotation = actions.DiscreteActions[1];     // 0–3
+
+    //     // Apply rotation
+    //     for (int i = 0; i < rotation; i++)
+    //         block.RotateOnce();
+
+    //     // Move horizontally
+    //     block.MoveToColumn(targetColumn);
+
+    //     // INSTANT DROP
+    //     block.HardDrop();
+
+    //     // Lock piece
+    //     block.AddToGrid();
+
+    //     int linesCleared = block.CheckForLines();
+
+    //     var agent = this;
+
+    //     bool gameOver = TetrisBlock.GetMaxHeight() > TetrisBlock.height - 6;
+
+    //     if (gameOver)
+    //     {
+    //         GameOverHandler.GetInstance()?.DisplayGameOver();
+    //         agent.GameOver();
+    //         return;
+    //     }
+    //     else
+    //     {
+    //         agent.EvaluatePlacement(linesCleared);
+    //     }
+
+    //     FindObjectOfType<SpawnTetromino>()?.NewTetromino();
+    // }
 
     public void EvaluatePlacement(int linesCleared)
     {
@@ -104,15 +177,15 @@ public class PlayTetrisAgent : Agent
 
         if (currentHeight > previousHeight)
         {
-            float reward = -0.1f * currentHeight;
-            AddReward(reward); 
+            float reward = -1f * currentHeight;
+            AddReward(reward);
             previousHeight = currentHeight;
         }
 
         if (currentHoles > previousHoles)
         {
-            float reward = -0.3f * currentHeight;
-            AddReward(reward); 
+            float reward = -5f * currentHeight;
+            AddReward(reward);
             previousHoles = currentHoles;
         }
 

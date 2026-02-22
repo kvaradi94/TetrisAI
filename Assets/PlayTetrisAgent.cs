@@ -93,29 +93,22 @@ public class PlayTetrisAgent : Agent
 
     public void EvaluatePlacement(int linesCleared)
     {
-        if (linesCleared > 0)
-        {
-            AddReward(1000f);
-            return;
-        }
-
+        float reward = 500f * linesCleared;
         int currentHeight = TetrisBlock.GetMaxHeight();
         int currentHoles = TetrisBlock.CountHoles();
 
         if (currentHeight > previousHeight)
         {
-            float reward = -0.1f * currentHeight;
-            AddReward(reward); 
-            previousHeight = currentHeight;
+            reward += -3f * (currentHeight - previousHeight);
         }
 
         if (currentHoles > previousHoles)
         {
-            float reward = -0.3f * currentHeight;
-            AddReward(reward); 
-            previousHoles = currentHoles;
+            reward += -10f * (currentHoles - previousHoles);
         }
-
+        previousHeight = currentHeight;
+        previousHoles = currentHoles;
+        AddReward(reward);
     }
     public void GameOver()
     {

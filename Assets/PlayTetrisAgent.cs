@@ -8,6 +8,10 @@ public class PlayTetrisAgent : Agent
     private int previousHeight;
     private int previousHoles;
     private TetrominoType currentPieceType;
+    private float rewards = 0f;
+    private int scores = 0;
+    private int maxScore = 0;
+    private int maxScoreEpisode = 0;
 
     public void SetCurrentPiece(TetrominoType type)
     {
@@ -114,7 +118,21 @@ public class PlayTetrisAgent : Agent
     {
         AddReward(-1000f);
 
-        Debug.Log($"Episodes: {CompletedEpisodes}, Total Reward: {GetCumulativeReward():F3}, Point scored: {ScoreManager.Instance.CurrentScore}");
+        rewards += GetCumulativeReward();
+        scores += ScoreManager.Instance.CurrentScore; 
+
+        if (ScoreManager.Instance.CurrentScore > maxScore)
+        {
+            maxScore = ScoreManager.Instance.CurrentScore;
+            maxScoreEpisode = CompletedEpisodes;
+        }
+
+        if (CompletedEpisodes % 100 == 0)
+        {
+            Debug.Log($"Episodes: {CompletedEpisodes}, AVG Reward: {rewards / 10:F1}, AVG score: {scores / 10:F1}, MAX Score: {maxScore:F1}, MAX Score Episode: {maxScoreEpisode}");
+            rewards = 0;
+            scores = 0;
+        }
 
         EndEpisode();
     }

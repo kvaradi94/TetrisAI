@@ -2,6 +2,8 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using System;
+using UnityEngine.Rendering.Universal.Internal;
 
 public class PlayTetrisAgent : Agent
 {
@@ -36,6 +38,7 @@ public class PlayTetrisAgent : Agent
         previousHoles = 0;
     }
 
+    // space size: 247
     public override void CollectObservations(VectorSensor sensor)
     {
         for (int y = 0; y < TetrisBlock.height; y++)
@@ -52,6 +55,57 @@ public class PlayTetrisAgent : Agent
         foreach (float v in oneHot)
             sensor.AddObservation(v);
     }
+
+    // space size: 251
+    // public override void CollectObservations(VectorSensor sensor)
+    // {
+    //     int maxheight = TetrisBlock.GetMaxHeight();
+    //     int holes = TetrisBlock.CountHoles();
+    //     int bumpiness = 0;
+
+    //     // calculate bumpiness:
+    //     int[] heights = TetrisBlock.GetColumnHeights();
+    //     for (int i = 0; i < heights.Length - 1; i++)
+    //     {
+    //         bumpiness += Math.Abs(heights[i] - heights[i + 1]);
+    //     }
+
+    //     int numberOfLinesCleared = 0;
+    //     for (int y = 0; y < TetrisBlock.height; y++)
+    //     {
+    //         bool full = true;
+    //         for (int x = 0; x < TetrisBlock.width; x++)
+    //         {
+    //             if (TetrisBlock.grid[y, x] == null)
+    //             {
+    //                 full = false; break;
+    //             }
+    //         }
+    //         if (full)
+    //         {
+    //             numberOfLinesCleared++;
+    //         }
+    //     }
+
+    //     for (int y = 0; y < TetrisBlock.height; y++)
+    //     {
+    //         for (int x = 0; x < TetrisBlock.width; x++)
+    //         {
+    //             sensor.AddObservation(TetrisBlock.grid[y, x] != null ? 1f : 0f);
+    //         }
+    //     }
+
+    //     float[] oneHot = new float[7];
+    //     oneHot[(int)currentPieceType] = 1f;
+
+    //     foreach (float v in oneHot)
+    //         sensor.AddObservation(v);
+
+    //     sensor.AddObservation(numberOfLinesCleared);
+    //     sensor.AddObservation(maxheight);
+    //     sensor.AddObservation(holes);
+    //     sensor.AddObservation(bumpiness);
+    // }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
@@ -119,7 +173,7 @@ public class PlayTetrisAgent : Agent
         AddReward(-1000f);
 
         rewards += GetCumulativeReward();
-        scores += ScoreManager.Instance.CurrentScore; 
+        scores += ScoreManager.Instance.CurrentScore;
 
         if (ScoreManager.Instance.CurrentScore > maxScore)
         {
@@ -127,9 +181,10 @@ public class PlayTetrisAgent : Agent
             maxScoreEpisode = CompletedEpisodes;
         }
 
-        if (CompletedEpisodes % 100 == 0)
+        const int batchSize = 100;
+        if (CompletedEpisodes % batchSize == 0)
         {
-            Debug.Log($"Episodes: {CompletedEpisodes}, AVG Reward: {rewards / 10:F1}, AVG score: {scores / 10:F1}, MAX Score: {maxScore:F1}, MAX Score Episode: {maxScoreEpisode}");
+            Debug.Log($"Episodes: {CompletedEpisodes}, AVG Reward: {rewards / batchSize:F1}, AVG score: {scores / batchSize:F1}, MAX Score: {maxScore:F1}, MAX Score Episode: {maxScoreEpisode}");
             rewards = 0;
             scores = 0;
         }

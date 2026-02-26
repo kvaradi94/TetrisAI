@@ -2,58 +2,58 @@
     "GoalToTetris": {
         "checkpoints": [
             {
-                "steps": 59999988,
-                "file_path": "results/run004/GoalToTetris/GoalToTetris-59999988.onnx",
-                "reward": 6088.2405063291135,
-                "creation_time": 1772033400.218935,
+                "steps": 84999981,
+                "file_path": "results/run004/GoalToTetris/GoalToTetris-84999981.onnx",
+                "reward": 9170.728571428572,
+                "creation_time": 1772133925.596433,
                 "auxillary_file_paths": [
-                    "results/run004/GoalToTetris/GoalToTetris-59999988.pt"
+                    "results/run004/GoalToTetris/GoalToTetris-84999981.pt"
                 ]
             },
             {
-                "steps": 60499951,
-                "file_path": "results/run004/GoalToTetris/GoalToTetris-60499951.onnx",
-                "reward": 7535.695652173913,
-                "creation_time": 1772034848.161126,
+                "steps": 85499946,
+                "file_path": "results/run004/GoalToTetris/GoalToTetris-85499946.onnx",
+                "reward": 11999.04347826087,
+                "creation_time": 1772135382.707971,
                 "auxillary_file_paths": [
-                    "results/run004/GoalToTetris/GoalToTetris-60499951.pt"
+                    "results/run004/GoalToTetris/GoalToTetris-85499946.pt"
                 ]
             },
             {
-                "steps": 60999937,
-                "file_path": "results/run004/GoalToTetris/GoalToTetris-60999937.onnx",
-                "reward": 6309.954128440367,
-                "creation_time": 1772036295.9006422,
+                "steps": 85999996,
+                "file_path": "results/run004/GoalToTetris/GoalToTetris-85999996.onnx",
+                "reward": 10410.439560439561,
+                "creation_time": 1772136838.116423,
                 "auxillary_file_paths": [
-                    "results/run004/GoalToTetris/GoalToTetris-60999937.pt"
+                    "results/run004/GoalToTetris/GoalToTetris-85999996.pt"
                 ]
             },
             {
-                "steps": 61499939,
-                "file_path": "results/run004/GoalToTetris/GoalToTetris-61499939.onnx",
-                "reward": 6370.137931034483,
-                "creation_time": 1772037754.933016,
+                "steps": 86499948,
+                "file_path": "results/run004/GoalToTetris/GoalToTetris-86499948.onnx",
+                "reward": 9886.777777777777,
+                "creation_time": 1772138299.38818,
                 "auxillary_file_paths": [
-                    "results/run004/GoalToTetris/GoalToTetris-61499939.pt"
+                    "results/run004/GoalToTetris/GoalToTetris-86499948.pt"
                 ]
             },
             {
-                "steps": 61686820,
-                "file_path": "results/run004/GoalToTetris/GoalToTetris-61686820.onnx",
-                "reward": 6316.779069767442,
-                "creation_time": 1772038301.4340742,
+                "steps": 86720103,
+                "file_path": "results/run004/GoalToTetris/GoalToTetris-86720103.onnx",
+                "reward": 9967.477777777778,
+                "creation_time": 1772138946.7178292,
                 "auxillary_file_paths": [
-                    "results/run004/GoalToTetris/GoalToTetris-61686820.pt"
+                    "results/run004/GoalToTetris/GoalToTetris-86720103.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 61686820,
+            "steps": 86720103,
             "file_path": "results/run004/GoalToTetris.onnx",
-            "reward": 6316.779069767442,
-            "creation_time": 1772038301.4340742,
+            "reward": 9967.477777777778,
+            "creation_time": 1772138946.7178292,
             "auxillary_file_paths": [
-                "results/run004/GoalToTetris/GoalToTetris-61686820.pt"
+                "results/run004/GoalToTetris/GoalToTetris-86720103.pt"
             ]
         }
     },

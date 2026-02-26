@@ -19,7 +19,7 @@ public class TetrisBlock : MonoBehaviour
     {
         IsPlaced = false;
         prevTime = Time.time;
-        // Application.targetFrameRate = 60;
+        Application.targetFrameRate = 60;
     }
 
     // Update is called once per frame

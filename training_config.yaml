@@ -11,4 +11,7 @@ behaviors:
       extrinsic:
         gamma: 0.95
         strength: 1.0
+      curiosity:
+        strength: 0.02
+        gamma: 0.99
 
